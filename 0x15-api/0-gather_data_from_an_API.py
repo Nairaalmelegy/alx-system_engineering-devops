@@ -1,38 +1,59 @@
 #!/usr/bin/python3
-"""Returns to-do list information for a given employee ID."""
+"""script that fetches info about a given employee's ID using an api"""
+import json
 import requests
 import sys
 
 
-def tasks_done(id):
-    '''Script that displays an employee completed TODO tasks in stout
-    Parameters:
-    employee_id: Is an interger representing an employee id.
-    '''
-    
-    url = "https://jsonplaceholder.typicode.com/users/{}".format(id)
-    response = requests.get(url)
-    response_json = response.json()
-    employee_name = response_json.get("name")
-    
-    url = "https://jsonplaceholder.typicode.com/users/{}/todos".format(id)
-    todos = requests.get(url)
-    todos_json = todos.json()
-    number_tasks = len(todos_json)
-    
-    task_compleated = 0
-    task_list = ""
-
-    for task in todos_json:
-        if task.get("completed") is True:
-            task_compleated += 1
-            task_list += "\t " + task.get("title") + "\n"
-
-    print("Employee {} is done with tasks({}/{}):".format(employee_name,
-                                                          task_compleated,
-                                                          number_tasks))
-    print(task_list[:-1])
-
+base_url = 'https://jsonplaceholder.typicode.com'
 
 if __name__ == "__main__":
-    tasks_done(sys.argv[1])
+
+    user_id = sys.argv[1]
+
+    # get user info e.g https://jsonplaceholder.typicode.com/users/1/
+    user_url = '{}/users?id={}'.format(base_url, user_id)
+    # print("user url is: {}".format(user_url))
+
+    # get info from api
+    response = requests.get(user_url)
+    # pull data from api
+    data = response.text
+    # parse the data into JSON format
+    data = json.loads(data)
+    # extract user data, in this case, name of employe
+    name = data[0].get('name')
+    # print("id is: {}".format(user_id))
+    # print("name is: {}".format(name))
+
+    # get user info about todo tasks
+    # e.g https://jsonplaceholder.typicode.com/users/1/todos
+    tasks_url = '{}/todos?userId={}'.format(base_url, user_id)
+    # print("tasks url is: {}".format(tasks_url))
+
+    # get info from api
+    response = requests.get(tasks_url)
+    # pull data from api
+    tasks = response.text
+    # parse the data into JSON format
+    tasks = json.loads(tasks)
+
+    # initialize completed count as 0 and find total number of tasks
+    completed = 0
+    total_tasks = len(tasks)
+
+    # initialize empty list for completed tasks
+    completed_tasks = []
+    # loop through tasks counting number of completed tasks
+    for task in tasks:
+
+        if task.get('completed'):
+            # print("The tasks are: {}\n".format(task))
+            completed_tasks.append(task)
+            completed += 1
+
+    # print the output in the required format
+    print("Employee {} is done with tasks({}/{}):"
+          .format(name, completed, total_tasks))
+    for task in completed_tasks:
+        print("\t {}".format(task.get('title')))
