@@ -1,4 +1,7 @@
 # Postmortem: Web Stack Outage - May 10, 2024
+<p align="center">
+<img src="https://github.com/Nairaalmelegy/alx-system_engineering-devops/blob/master/0x19-postmortem/postmortem.png" width=100% height=100% />
+</p>
 
 **Issue Summary:**
 - **Duration:** May 10, 2024, 10:00 AM - May 10, 2024, 12:00 PM (UTC)
