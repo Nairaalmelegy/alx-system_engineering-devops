@@ -1,11 +1,6 @@
-# Create a manifest that fixes file name typo
-exec { 'fix_apache_config':
-  command     => '/bin/sed -i "s/DirectoryIndex.*/DirectoryIndex index.php index.html/g" /etc/apache2/mods-enabled/dir.conf',
-  refreshonly => true,
-  subscribe   => File['/etc/apache2/mods-enabled/dir.conf'],
-}
+# Creat a manifest that fix all termintion of phpp.
 
-service { 'apache2':
-  ensure => running,
-  enable => true,
+exec { 'fix_phpp':
+  command => 'sed -i s/phpp/php/g /var/www/html/wp-settings.php',
+  path    => ['/bin', '/usr/bin/', '/usr/loca/bin/'],
 }
